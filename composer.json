@@ -1,0 +1,15 @@
+{
+  "name": "lppl/tsh_backend_test",
+  "description": "TSH backend test application, Spagetti monster have mercy on our soup",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Łukasz Pietrek",
+      "email": "lpietrek@gmail.com"
+    }
+  ],
+  "require" : {
+    "php" : ">=7.0.10"
+  }
+}
