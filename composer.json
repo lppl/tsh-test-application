@@ -9,7 +9,19 @@
       "email": "lpietrek@gmail.com"
     }
   ],
+  "autoload": {
+    "classmap": ["lib/"]
+  },
   "require" : {
     "php" : ">=7.0.10"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "6.0.x-dev"
+  },
+  "scripts": {
+    "test": [
+      "@composer install",
+      "phpunit -c test/backend/phpunit.xml --coverate-html"
+    ]
   }
 }
