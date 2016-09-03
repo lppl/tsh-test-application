@@ -41,6 +41,7 @@ class ControllerProduceCorrectData extends TestCase
     )
     {
         $payments_on_page = $response['payments_on_page'] ?? $config['payments_per_page'];
+        $total_pages = $response['total_pages'] ?? 50;
 
 
         $controller = new PaymentsController($config, new PaymentsModel());
@@ -51,6 +52,8 @@ class ControllerProduceCorrectData extends TestCase
         self::assertSame($config['title'], $page->title);
         self::assertSame($config['subtitle'], $page->subtitle);
         self::assertCount($payments_on_page, $page->payments);
+        self::assertSame($total_pages, $page->total_pages);
+        self::assertSame($request->page(), $page->current_page);
 
         foreach ($page->payments as $payment) {
             self::assertSame(PaymentsModel::class, get_class($payment));
@@ -59,18 +62,18 @@ class ControllerProduceCorrectData extends TestCase
 
     public function pages()
     {
-        return [[ // we ask for no payments on page
-            array_merge($this->base_config, ['payments_per_page' => 0]),
-            new PaymentsRequest(),
-            ['payments_on_page' => 0]
-        ], [ // when we as for 10 payments on page
-            array_merge($this->base_config, ['payments_per_page' => 10]),
+        return [[ // when we ask for basic config
+            $this->base_config,
             new PaymentsRequest(),
             []
+        ],[ // when we as for 10 payments on page
+            array_merge($this->base_config, ['payments_per_page' => 10]),
+            new PaymentsRequest(),
+            ['total_pages' => 25]
         ], [ // ask for last page which has less records than usually
             array_merge($this->base_config, ['payments_per_page' => 10]),
             new PaymentsRequest($page = 25),
-            ['payments_on_page' => 8]
+            ['payments_on_page' => 8, 'total_pages' => 25]
         ]];
     }
 }

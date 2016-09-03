@@ -31,6 +31,9 @@ class PaymentsController
             $request->page(),
             $this->config['payments_per_page']
         );
+
+        $page->total_pages = (int) \ceil(\TSH_Db::Get()->numRows() / (int)$this->config['payments_per_page']);
+        $page->current_page = $request->page();
         return $page;
     }
 }
