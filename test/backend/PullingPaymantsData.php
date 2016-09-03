@@ -5,6 +5,7 @@
 
 declare(strict_types = 1);
 
+use TSH\Local\PaymentsModel;
 
 use PHPUnit\Framework\TestCase;
 

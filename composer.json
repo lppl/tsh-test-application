@@ -10,6 +10,9 @@
     }
   ],
   "autoload": {
+    "psr-4": {
+      "TSH\\Local\\" : "lib/Local/"
+    },
     "classmap": ["lib/"]
   },
   "require" : {

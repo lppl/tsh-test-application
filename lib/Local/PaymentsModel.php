@@ -5,6 +5,9 @@
 
 declare(strict_types = 1);
 
+namespace TSH\Local;
+
+use TSH_Model;
 
 /**
  * @property string $supplier
