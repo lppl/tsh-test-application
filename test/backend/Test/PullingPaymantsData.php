@@ -5,7 +5,10 @@
 
 declare(strict_types = 1);
 
+namespace TSH\Local\Test;
+
 use TSH\Local\PaymentsModel;
+use TSH\Local\TestUtil\DBTools;
 
 use PHPUnit\Framework\TestCase;
 

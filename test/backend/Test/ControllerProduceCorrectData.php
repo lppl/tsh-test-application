@@ -5,6 +5,7 @@
 
 declare(strict_types = 1);
 
+namespace TSH\Local\Test;
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,9 +13,17 @@ use TSH\Local\PaymentsModel;
 use TSH\Local\PaymentsPage;
 use TSH\Local\PaymentsController;
 use TSH\Local\PaymentsRequest;
+use TSH\Local\TestUtil\DBTools;
 
 class ControllerProduceCorrectData extends TestCase
 {
+    use DBTools;
+
+    protected function setUp()
+    {
+        $this->resetData();
+    }
+
     private $base_config = [
         'title' => 'Payments title',
         'subtitle' => 'Payments subtitle',

@@ -5,6 +5,7 @@
 
 declare(strict_types = 1);
 
+namespace TSH\Local\TestUtil;
 
 trait DBTools
 {
@@ -37,7 +38,7 @@ trait DBTools
 
     public function insertData()
     {
-        $script = __DIR__ . '/../../specification/data/payments.sql';
+        $script = __DIR__ . '/../../../specification/data/payments.sql';
         exec($this->credentials() . ' < ' . $script);
     }
 }
