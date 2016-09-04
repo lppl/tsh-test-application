@@ -26,6 +26,9 @@ class PaymentsPage
     /** @var int */
     public $current_page = 1;
 
+    /** @var string */
+    public $query_info = '';
+
     public function __construct(array $config)
     {
         foreach (get_object_vars($this) as $property => $default) {

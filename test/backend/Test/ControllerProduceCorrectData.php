@@ -27,6 +27,7 @@ class ControllerProduceCorrectData extends TestCase
     private $base_config = [
         'title' => 'Payments title',
         'subtitle' => 'Payments subtitle',
+        'query_info::result_is_empty' => 'Sorry, query result is emtpy.',
         'payments_per_page' => 5
     ];
 
@@ -60,13 +61,46 @@ class ControllerProduceCorrectData extends TestCase
         }
     }
 
+    /** @test */
+    public function controllerWithSupplierQueries()
+    {
+        $controller = new PaymentsController($this->base_config, new PaymentsModel());
+
+        $this->clearData();
+        $this->insertCustomPayments([[
+            'payment_supplier' => 'First Supplier',
+            'payment_ref' => '111111',
+            'payment_cost_rating' => 2,
+            'payment_amount' => 1111.00
+        ], [
+            'payment_supplier' => 'Other Supplier',
+            'payment_ref' => '222222',
+            'payment_cost_rating' => 3,
+            'payment_amount' => 2222.00
+        ]]);
+
+        $no_such_supplier = $controller->respondTo(
+            new PaymentsRequest($page = 1, $supplier = 'No such Supplier')
+        );
+
+        static::assertCount(0, $no_such_supplier->payments);
+        static::assertSame($this->base_config['query_info::result_is_empty'], $no_such_supplier->query_info);
+
+        $single_supplier = $controller->respondTo(
+            new PaymentsRequest($page = 1, $supplier = 'Other')
+        );
+
+        static::assertCount(1, $single_supplier->payments);
+        static::assertSame('', $single_supplier->query_info);
+    }
+
     public function pages()
     {
         return [[ // when we ask for basic config
             $this->base_config,
             new PaymentsRequest(),
             []
-        ],[ // when we as for 10 payments on page
+        ], [ // when we as for 10 payments on page
             array_merge($this->base_config, ['payments_per_page' => 10]),
             new PaymentsRequest(),
             ['total_pages' => 25]

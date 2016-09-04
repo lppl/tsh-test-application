@@ -7,6 +7,8 @@ declare(strict_types = 1);
 
 namespace TSH\Local\TestUtil;
 
+use TSH\Local\PaymentsModel;
+
 trait DBTools
 {
     private function credentials() : string
@@ -40,5 +42,14 @@ trait DBTools
     {
         $script = __DIR__ . '/../../../specification/data/payments.sql';
         exec($this->credentials() . ' < ' . $script);
+    }
+
+    public function insertCustomPayments(array $payments = [])
+    {
+        foreach($payments as $payment) {
+            $model = new PaymentsModel();
+            $model->setFromArray($payment);
+            $model->save();
+        }
     }
 }

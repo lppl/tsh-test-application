@@ -25,15 +25,28 @@ class PaymentsController
 
     public function respondTo(PaymentsRequest $request) : PaymentsPage
     {
-        $page = new PaymentsPage($this->config);
         $model = $this->model;
-        $page->payments = $model::FindPage(
-            $request->page(),
-            $this->config['payments_per_page']
-        );
 
-        $page->total_pages = (int) \ceil(\TSH_Db::Get()->numRows() / (int)$this->config['payments_per_page']);
-        $page->current_page = $request->page();
+        $where = 1;
+        $params = [];
+        if ($request->supplier()) {
+            $where = 'payment_supplier LIKE :supplier';
+            $params['supplier'] = "%{$request->supplier()}%";
+        }
+        $payments = $model::FindPage(
+            $request->page(),
+            $this->config['payments_per_page'],
+            $where,
+            $params
+        ) ?: [];
+
+        $page = new PaymentsPage(array_merge($this->config, [
+            'payments' => $payments,
+            'total_pages' => (int) \ceil(\TSH_Db::Get()->numRows() / (int)$this->config['payments_per_page']),
+            'current_page' => $request->page(),
+            'query_info' => count($payments) ? '' : $this->config['query_info::result_is_empty']
+        ]));
+
         return $page;
     }
 }
