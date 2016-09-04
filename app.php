@@ -16,7 +16,7 @@ $app->get('/', function(Request $request) use ($app) {
     $model = new PaymentsModel();
     $controller = new PaymentsController($app['config'], $model);
 
-    $controller->respondTo(new PaymentsRequest(
+    $data = $controller->respondTo(new PaymentsRequest(
         $request->query->getInt('page', 1),
         $request->query->get('supplier', ''),
         $request->query->getInt('cost_rating', 0)

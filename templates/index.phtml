@@ -1,3 +1,98 @@
+<?php /** @var \TSH\Local\PaymentsPage $data */ ?>
 <?php ob_start() ?>
-    Hello World!
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Payments made by Chichester District Council</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <link rel="stylesheet" href="/theme/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/theme/bootstrap/css/bootstrap-theme.css">
+
+        <link rel="stylesheet" href="/theme/style.css">
+
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400" rel="stylesheet">
+    </head>
+    <body>
+    <div class="tsh-container container">
+        <h1 class="tsh-title"><?= $data->title ?></h1>
+        <h4 class="tsh-subtitle"><?= $data->subtitle ?></h4>
+        <hr class="tsh-hr-spacer">
+        <form action="/" method="GET" class="tsh-form form-inline">
+            <fieldset>
+                <input name="page" type="hidden" value="1">
+                <input name="supplier" type="text" class="form-control tsh-search-suppliers"
+                       placeholder="Search suppliers" value="<?= $data->query_supplier ?>">
+                <select name="cost_rating" class="form-control">
+                    <option value="0" <?= $data->query_cost_rating === 0 ? 'selected="selected"' : '' ?>>
+                        <?= $data->query_cost_rating === 0 ? 'Select pound rating' : 'All pound ratings' ?>
+                    </option>
+                    <option value="1" <?= $data->query_cost_rating === 1 ? 'selected="selected"' : '' ?>>Pound rating: 1</option>
+                    <option value="2" <?= $data->query_cost_rating === 2 ? 'selected="selected"' : '' ?>>Pound rating: 2</option>
+                    <option value="3" <?= $data->query_cost_rating === 3 ? 'selected="selected"' : '' ?>>Pound rating: 3</option>
+                    <option value="4" <?= $data->query_cost_rating === 4 ? 'selected="selected"' : '' ?>>Pound rating: 4</option>
+                    <option value="5" <?= $data->query_cost_rating === 5 ? 'selected="selected"' : '' ?>>Pound rating: 5</option>
+                </select>
+                <button class="btn">Reset</button>
+                <button class="btn btn-info" type="submit">Search</button>
+            </fieldset>
+        </form>
+        <hr class="tsh-hr-blank-spacer">
+        <div class="tsh-table-container">
+            <table class="tsh-table">
+                <thead>
+                <tr class="tsh-table-row">
+                    <th class="tsh-table-column tsh-table-header-column">Supplier</th>
+                    <th class="tsh-table-column tsh-table-header-column">Pound rating</th>
+                    <th class="tsh-table-column tsh-table-header-column">Reference</th>
+                    <th class="tsh-table-column tsh-table-header-column">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($data->payments as $payment): ?>
+                    <tr class="tsh-table-row">
+                        <td class="tsh-table-column"><?= $payment->supplier ?></td>
+                        <td class="tsh-table-column">
+                            <span class="tsh-rating-ico tsh-rating-ico-1 <?= $payment->cost_rating >= 1 ? 'on' : '' ?>">&#163;</span>
+                            <span class="tsh-rating-ico tsh-rating-ico-2 <?= $payment->cost_rating >= 2 ? 'on' : '' ?>">&#163;</span>
+                            <span class="tsh-rating-ico tsh-rating-ico-3 <?= $payment->cost_rating >= 3 ? 'on' : '' ?>">&#163;</span>
+                            <span class="tsh-rating-ico tsh-rating-ico-4 <?= $payment->cost_rating >= 4 ? 'on' : '' ?>">&#163;</span>
+                            <span class="tsh-rating-ico tsh-rating-ico-5 <?= $payment->cost_rating >= 5 ? 'on' : '' ?>">&#163;</span>
+                        </td>
+                        <td class="tsh-table-column"><?= $payment->ref ?></td>
+                        <td class="tsh-table-column">&#163;<?= $payment->amount ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php if (strlen($data->query_info)): ?>
+                    <tr>
+                        <td colspan="4"><?= $data->query_info ?></td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <nav>
+            <ul class="tsh-pagination">
+                <li>
+                    <a href="/index.php?page=<?= $data->current_page - 1 ?>&supplier=<?= $data->query_supplier ?>&cost_rating=<?= $data->query_cost_rating ?>"
+                       class="tsh-pagination-btn" <?= $data->current_page === 1 ? 'disabled="disabled"' : '' ?>>&lsaquo;</a>
+                </li>
+                <?php for ($page = 1; $page <= $data->total_pages; $page++): ?>
+                    <li>
+                        <a href="/index.php?page=<?= $page ?>&supplier=<?= $data->query_supplier ?>&cost_rating=<?= $data->query_cost_rating ?>"
+                           class="tsh-pagination-btn <?= $page === $data->current_page ? 'active' : '' ?>"><?= $page ?></a>
+                    </li>
+                <?php endfor; ?>
+                <li>
+                    <a href="/index.php?page=<?= $data->current_page + 1 ?>&supplier=<?= $data->query_supplier ?>&cost_rating=<?= $data->query_cost_rating ?>"
+                       class="tsh-pagination-btn" <?= ($data->current_page === $data->total_pages or $data->total_pages === 0)? 'disabled="disabled"' : '' ?>>&rsaquo;</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    </body>
+    </html>
 <?php return ob_get_clean() ?>
