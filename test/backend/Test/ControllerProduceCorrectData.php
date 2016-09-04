@@ -52,13 +52,27 @@ class ControllerProduceCorrectData extends TestCase
         self::assertSame(PaymentsPage::class, get_class($page));
         self::assertSame($config['title'], $page->title);
         self::assertSame($config['subtitle'], $page->subtitle);
-        self::assertCount($payments_on_page, $page->payments);
         self::assertSame($total_pages, $page->total_pages);
         self::assertSame($request->page(), $page->current_page);
 
+
+        self::assertCount($payments_on_page, $page->payments);
         foreach ($page->payments as $payment) {
             self::assertSame(PaymentsModel::class, get_class($payment));
         }
+
+
+        self::assertCount($total_pages, $page->page_links);
+        foreach ($page->page_links as $n => $link) {
+            $num = $n + 1;
+            self::assertSame($num === $page->current_page, $link['active']);
+            self::assertSame($num === $page->current_page, $link['disabled']);
+            self::assertSame($num, $link['text']);
+            self::assertContains("page=$num", $link['url']);
+            self::assertContains("supplier={$request->supplier()}", $link['url']);
+            self::assertContains("cost_rating={$request->cost_rating()}", $link['url']);
+        }
+
     }
 
 

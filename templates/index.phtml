@@ -77,18 +77,20 @@
         <nav>
             <ul class="tsh-pagination">
                 <li>
-                    <a href="/index.php?page=<?= $data->current_page - 1 ?>&supplier=<?= $data->query_supplier ?>&cost_rating=<?= $data->query_cost_rating ?>"
-                       class="tsh-pagination-btn" <?= $data->current_page === 1 ? 'disabled="disabled"' : '' ?>>&lsaquo;</a>
+                    <a href="<?= $data->prev_link['url'] ?>"
+                       class="tsh-pagination-btn tsh-pagination-btn-prev" <?= $data->prev_link['disabled'] ? 'disabled' : '' ?>><?= $data->prev_link['text'] ?></a>
                 </li>
-                <?php for ($page = 1; $page <= $data->total_pages; $page++): ?>
+                <?php foreach($data->page_links as $link): ?>
                     <li>
-                        <a href="/index.php?page=<?= $page ?>&supplier=<?= $data->query_supplier ?>&cost_rating=<?= $data->query_cost_rating ?>"
-                           class="tsh-pagination-btn <?= $page === $data->current_page ? 'active' : '' ?>"><?= $page ?></a>
+                        <a href="<?= $link['url'] ?>"
+                           class="tsh-pagination-btn <?= $link['active'] ? 'active' : '' ?>"
+                            <?= $link['disabled'] ? 'disabled' : ''?>
+                        ><?= $link['text'] ?></a>
                     </li>
-                <?php endfor; ?>
+                <?php endforeach; ?>
                 <li>
-                    <a href="/index.php?page=<?= $data->current_page + 1 ?>&supplier=<?= $data->query_supplier ?>&cost_rating=<?= $data->query_cost_rating ?>"
-                       class="tsh-pagination-btn" <?= ($data->current_page === $data->total_pages or $data->total_pages === 0)? 'disabled="disabled"' : '' ?>>&rsaquo;</a>
+                    <a href="<?= $data->next_link['url'] ?>"
+                       class="tsh-pagination-btn tsh-pagination-btn-next" <?= $data->next_link['disabled'] ? 'disabled' : '' ?>>&rsaquo;</a>
                 </li>
             </ul>
         </nav>

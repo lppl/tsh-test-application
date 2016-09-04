@@ -22,7 +22,7 @@ final class PaymentsRequest
 
     public function __construct(int $page = 1, string $supplier = '', int $cost_rating = 0)
     {
-        $this->page = $page;
+        $this->page = max(1, $page);
         $this->supplier = $supplier;
         $this->cost_rating = $cost_rating;
     }
@@ -41,4 +41,16 @@ final class PaymentsRequest
     {
         return $this->cost_rating;
     }
+
+    public function __toString() : string
+    {
+        return sprintf(
+            '?page=%s&supplier=%s&cost_rating=%s',
+            $this->page,
+            $this->supplier,
+            $this->cost_rating
+        );
+    }
+
+
 }
