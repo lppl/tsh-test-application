@@ -62,7 +62,7 @@ class ControllerProduceCorrectData extends TestCase
     }
 
     /** @test */
-    public function controllerWithSupplierQueries()
+    public function controllerWithQueries()
     {
         $controller = new PaymentsController($this->base_config, new PaymentsModel());
 
@@ -92,6 +92,20 @@ class ControllerProduceCorrectData extends TestCase
 
         static::assertCount(1, $single_supplier->payments);
         static::assertSame('', $single_supplier->query_info);
+
+        $no_such_rating = $controller->respondTo(
+            new PaymentsRequest($page = 1, $supplier = '', $cost_rating = 1)
+        );
+
+        static::assertCount(0, $no_such_rating->payments);
+        static::assertSame($this->base_config['query_info::result_is_empty'], $no_such_rating->query_info);
+
+        $single_rating = $controller->respondTo(
+            new PaymentsRequest($page = 1, $supplier = '', $cost_rating = 2)
+        );
+
+        static::assertCount(1, $single_rating->payments);
+        static::assertSame('', $single_rating->query_info);
     }
 
     public function pages()

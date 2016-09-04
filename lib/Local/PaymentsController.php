@@ -33,6 +33,11 @@ class PaymentsController
             $where = 'payment_supplier LIKE :supplier';
             $params['supplier'] = "%{$request->supplier()}%";
         }
+        if ($request->cost_rating()) {
+            $where = 'payment_cost_rating = :rating';
+            $params['rating'] = $request->cost_rating();
+        }
+
         $payments = $model::FindPage(
             $request->page(),
             $this->config['payments_per_page'],
