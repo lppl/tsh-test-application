@@ -29,5 +29,19 @@ $app->get('/', function(Request $request) use ($app) {
     ]);
 });
 
+$app->get('/json', function(Request $request) use ($app) {
+
+    $model = new PaymentsModel();
+    $controller = new PaymentsController($app['config'], $model);
+
+    $data = $controller->respondTo(new PaymentsRequest(
+        $request->query->getInt('page', 1),
+        $request->query->get('supplier', ''),
+        $request->query->getInt('cost_rating', 0)
+    ));
+
+    return $app->json($data, 200);
+});
+
 
 return $app;
