@@ -19,4 +19,6 @@ require ROOT . 'vendor/autoload.php';
 /** @var \Silex\Application $app */
 $app = require  __DIR__ . '/app.php';
 
+$app['debug'] = true;
+
 $app->run();

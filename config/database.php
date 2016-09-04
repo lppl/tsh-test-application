@@ -3,7 +3,7 @@
  * Database configuration options
  */
 
-define('DB_USERNAME',   'CHANGEME');
-define('DB_PASSWORD',   'CHANGEME');
-define('DB_HOST',       'CHANGEME');
-define('DB_NAME',       'CHANGEME');
+define('DB_USERNAME',   'tsh_backend');
+define('DB_PASSWORD',   'purplesmurfsarenastiestsmurfs');
+define('DB_HOST',       'localhost');
+define('DB_NAME',       'tsh_backend');
