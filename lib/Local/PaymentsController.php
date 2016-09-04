@@ -25,8 +25,46 @@ class PaymentsController
 
     public function respondTo(PaymentsRequest $request) : PaymentsPage
     {
+        list($total_pages, $payments) = $this->retrievePaymentsAndTotalPages($request);
+
+        $page = new PaymentsPage(array_merge($this->config, [
+            'payments' => $payments,
+            'total_pages' => $total_pages,
+            'current_page' => $request->page(),
+            'query_info' => count($payments) ? '' : $this->config['query_info::result_is_empty']
+        ]));
+
+        return $page;
+    }
+
+    /**
+     * @param PaymentsRequest $request
+     * @return array [$total_pages, $payments]
+     */
+    private function retrievePaymentsAndTotalPages(PaymentsRequest $request):array
+    {
         $model = $this->model;
 
+        list($where, $params) = $this->query($request);
+
+        $payments = $model::FindPage(
+            $request->page(),
+            $this->config['payments_per_page'],
+            $where,
+            $params
+        ) ?: [];
+
+        $total_pages = (int)\ceil(\TSH_Db::Get()->numRows() / (int)$this->config['payments_per_page']);
+
+        return [$total_pages, $payments];
+    }
+
+    /**
+     * @param PaymentsRequest $request
+     * @return array [$where, $params]
+     */
+    private function query(PaymentsRequest $request)
+    {
         $where = 1;
         $where_clauses = [];
         $params = [];
@@ -42,20 +80,6 @@ class PaymentsController
 
         $where = count($where_clauses) ? implode(' AND ', $where_clauses) : $where;
 
-        $payments = $model::FindPage(
-            $request->page(),
-            $this->config['payments_per_page'],
-            $where,
-            $params
-        ) ?: [];
-
-        $page = new PaymentsPage(array_merge($this->config, [
-            'payments' => $payments,
-            'total_pages' => (int) \ceil(\TSH_Db::Get()->numRows() / (int)$this->config['payments_per_page']),
-            'current_page' => $request->page(),
-            'query_info' => count($payments) ? '' : $this->config['query_info::result_is_empty']
-        ]));
-
-        return $page;
+        return [$where, $params];
     }
 }
