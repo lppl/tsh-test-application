@@ -77,6 +77,11 @@ class ControllerProduceCorrectData extends TestCase
             'payment_ref' => '222222',
             'payment_cost_rating' => 3,
             'payment_amount' => 2222.00
+        ], [
+            'payment_supplier' => 'Third Supplier',
+            'payment_ref' => '222222',
+            'payment_cost_rating' => 3,
+            'payment_amount' => 2222.00
         ]]);
 
         $no_such_supplier = $controller->respondTo(
@@ -106,6 +111,20 @@ class ControllerProduceCorrectData extends TestCase
 
         static::assertCount(1, $single_rating->payments);
         static::assertSame('', $single_rating->query_info);
+
+        $no_mixed_results = $controller->respondTo(
+            new PaymentsRequest($page = 1, $supplier = 'Third', $cost_rating = 2)
+        );
+
+        static::assertCount(0, $no_mixed_results->payments);
+        static::assertSame($this->base_config['query_info::result_is_empty'], $no_mixed_results->query_info);
+
+        $single_mixed_result = $controller->respondTo(
+            new PaymentsRequest($page = 1, $supplier = 'Third', $cost_rating = 3)
+        );
+
+        static::assertCount(1, $single_mixed_result->payments);
+        static::assertSame('', $single_mixed_result->query_info);
     }
 
     public function pages()

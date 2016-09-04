@@ -28,15 +28,19 @@ class PaymentsController
         $model = $this->model;
 
         $where = 1;
+        $where_clauses = [];
         $params = [];
+
         if ($request->supplier()) {
-            $where = 'payment_supplier LIKE :supplier';
+            $where_clauses[] = 'payment_supplier LIKE :supplier';
             $params['supplier'] = "%{$request->supplier()}%";
         }
         if ($request->cost_rating()) {
-            $where = 'payment_cost_rating = :rating';
+            $where_clauses[] = 'payment_cost_rating = :rating';
             $params['rating'] = $request->cost_rating();
         }
+
+        $where = count($where_clauses) ? implode(' AND ', $where_clauses) : $where;
 
         $payments = $model::FindPage(
             $request->page(),
