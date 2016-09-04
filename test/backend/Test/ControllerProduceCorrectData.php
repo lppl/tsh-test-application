@@ -61,8 +61,33 @@ class ControllerProduceCorrectData extends TestCase
         }
     }
 
-    /** @test */
-    public function controllerWithQueries()
+
+    public function pages()
+    {
+        return [[ // when we ask for basic config
+            $this->base_config,
+            new PaymentsRequest(),
+            []
+        ], [ // when we as for 10 payments on page
+            array_merge($this->base_config, ['payments_per_page' => 10]),
+            new PaymentsRequest(),
+            ['total_pages' => 25]
+        ], [ // ask for last page which has less records than usually
+            array_merge($this->base_config, ['payments_per_page' => 10]),
+            new PaymentsRequest($page = 25),
+            ['payments_on_page' => 8, 'total_pages' => 25]
+        ]];
+    }
+
+    /**
+     * @test
+     * @dataProvider queries
+     */
+    public function controllersMangeQueries(
+        string $test_info,
+        PaymentsRequest $request,
+        int $result_count,
+        string $query_info)
     {
         $controller = new PaymentsController($this->base_config, new PaymentsModel());
 
@@ -84,63 +109,22 @@ class ControllerProduceCorrectData extends TestCase
             'payment_amount' => 2222.00
         ]]);
 
-        $no_such_supplier = $controller->respondTo(
-            new PaymentsRequest($page = 1, $supplier = 'No such Supplier')
-        );
+        $page = $controller->respondTo($request);
 
-        static::assertCount(0, $no_such_supplier->payments);
-        static::assertSame($this->base_config['query_info::result_is_empty'], $no_such_supplier->query_info);
+        static::assertCount($result_count, $page->payments);
+        static::assertSame($query_info, $page->query_info);
 
-        $single_supplier = $controller->respondTo(
-            new PaymentsRequest($page = 1, $supplier = 'Other')
-        );
-
-        static::assertCount(1, $single_supplier->payments);
-        static::assertSame('', $single_supplier->query_info);
-
-        $no_such_rating = $controller->respondTo(
-            new PaymentsRequest($page = 1, $supplier = '', $cost_rating = 1)
-        );
-
-        static::assertCount(0, $no_such_rating->payments);
-        static::assertSame($this->base_config['query_info::result_is_empty'], $no_such_rating->query_info);
-
-        $single_rating = $controller->respondTo(
-            new PaymentsRequest($page = 1, $supplier = '', $cost_rating = 2)
-        );
-
-        static::assertCount(1, $single_rating->payments);
-        static::assertSame('', $single_rating->query_info);
-
-        $no_mixed_results = $controller->respondTo(
-            new PaymentsRequest($page = 1, $supplier = 'Third', $cost_rating = 2)
-        );
-
-        static::assertCount(0, $no_mixed_results->payments);
-        static::assertSame($this->base_config['query_info::result_is_empty'], $no_mixed_results->query_info);
-
-        $single_mixed_result = $controller->respondTo(
-            new PaymentsRequest($page = 1, $supplier = 'Third', $cost_rating = 3)
-        );
-
-        static::assertCount(1, $single_mixed_result->payments);
-        static::assertSame('', $single_mixed_result->query_info);
     }
 
-    public function pages()
+    public function queries()
     {
-        return [[ // when we ask for basic config
-            $this->base_config,
-            new PaymentsRequest(),
-            []
-        ], [ // when we as for 10 payments on page
-            array_merge($this->base_config, ['payments_per_page' => 10]),
-            new PaymentsRequest(),
-            ['total_pages' => 25]
-        ], [ // ask for last page which has less records than usually
-            array_merge($this->base_config, ['payments_per_page' => 10]),
-            new PaymentsRequest($page = 25),
-            ['payments_on_page' => 8, 'total_pages' => 25]
-        ]];
+        return [
+            ['Missing supplier', new PaymentsRequest(1, 'No such Supplier'), 0, $this->base_config['query_info::result_is_empty']],
+            ['Found supplier', new PaymentsRequest(1, 'Other'), 1, ''],
+            ['Missing cost_rating', new PaymentsRequest(1, '', 1), 0, $this->base_config['query_info::result_is_empty']],
+            ['Found cost_rating', new PaymentsRequest(1, '', 2), 1, ''],
+            ['Missing mixed params', new PaymentsRequest(1, 'Third', 2), 0, $this->base_config['query_info::result_is_empty']],
+            ['Found mixed params', new PaymentsRequest(1, 'Third', 3), 1, ''],
+        ];
     }
 }
