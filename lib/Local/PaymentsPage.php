@@ -29,6 +29,12 @@ class PaymentsPage
     /** @var string */
     public $query_info = '';
 
+    /** @var int */
+    public $query_cost_rating = 0;
+
+    /** @var string */
+    public $query_supplier = '';
+
     public function __construct(array $config)
     {
         foreach (get_object_vars($this) as $property => $default) {

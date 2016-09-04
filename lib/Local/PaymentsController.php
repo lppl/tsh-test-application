@@ -31,7 +31,9 @@ class PaymentsController
             'payments' => $payments,
             'total_pages' => $total_pages,
             'current_page' => $request->page(),
-            'query_info' => count($payments) ? '' : $this->config['query_info::result_is_empty']
+            'query_info' => count($payments) ? '' : $this->config['query_info::result_is_empty'],
+            'query_supplier' => $request->supplier(),
+            'query_cost_rating' => $request->cost_rating(),
         ]));
 
         return $page;

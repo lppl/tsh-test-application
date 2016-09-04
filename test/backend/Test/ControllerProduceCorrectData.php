@@ -113,6 +113,8 @@ class ControllerProduceCorrectData extends TestCase
 
         static::assertCount($result_count, $page->payments);
         static::assertSame($query_info, $page->query_info);
+        static::assertSame($request->supplier(), $page->query_supplier);
+        static::assertSame($request->cost_rating(), $page->query_cost_rating);
 
     }
 
