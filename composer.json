@@ -19,7 +19,8 @@
     "php" : ">=7.0.10"
   },
   "require-dev": {
-    "phpunit/phpunit": "6.0.x-dev"
+    "phpunit/phpunit": "6.0.x-dev",
+    "silex/silex": "v2.0.3"
   },
   "scripts": {
     "test": [
