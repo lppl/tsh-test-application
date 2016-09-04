@@ -35,6 +35,15 @@ class PaymentsPage
     /** @var string */
     public $query_supplier = '';
 
+    /** @var array */
+    public $page_links = [];
+
+    /** @var array */
+    public $prev_link = [];
+
+    /** @var array */
+    public $next_link = [];
+
     public function __construct(array $config)
     {
         foreach (get_object_vars($this) as $property => $default) {

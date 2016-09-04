@@ -150,10 +150,15 @@ body {
     text-decoration: none;
 }
 
-.tsh-pagination-btn[disabled="disabled"] {
+.tsh-pagination-btn[disabled] {
     pointer-events: none;
+}
+
+.tsh-pagination-btn-prev[disabled],
+.tsh-pagination-btn-next[disabled] {
     background: #f6f6f6;
     border: 1px solid #bebebe;
+
 }
 
 .tsh-hr-spacer {

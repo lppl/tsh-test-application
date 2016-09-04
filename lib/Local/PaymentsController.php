@@ -34,6 +34,9 @@ class PaymentsController
             'query_info' => count($payments) ? '' : $this->config['query_info::result_is_empty'],
             'query_supplier' => $request->supplier(),
             'query_cost_rating' => $request->cost_rating(),
+            'page_links' => $this->pageLinks($request, $total_pages),
+            'prev_link' => $this->prevLink($request),
+            'next_link' => $this->nextLink($request, $total_pages),
         ]));
 
         return $page;
@@ -83,5 +86,52 @@ class PaymentsController
         $where = count($where_clauses) ? implode(' AND ', $where_clauses) : $where;
 
         return [$where, $params];
+    }
+
+    /**
+     * @param PaymentsRequest $request
+     * @param int $total_pages
+     * @return array [$links...]
+     */
+    private function pageLinks(PaymentsRequest $request, int $total_pages)
+    {
+        return array_map(function($page) use ($request) {
+            return [
+                'disabled' =>  $request->page() === $page,
+                'active' => $request->page() === $page,
+                'text' => $page,
+                'url' => (string) new PaymentsRequest($page, $request->supplier(), $request->cost_rating())
+            ];
+        }, range(1, $total_pages));
+    }
+
+    /**
+     * @param PaymentsRequest $request
+     * @return array $link['disabled', 'active', 'text', 'url']
+     */
+    private function prevLink(PaymentsRequest $request) : array
+    {
+        return [
+            'disabled' =>  $request->page() <= 1,
+            'active' => false,
+            'text' => '&lsaquo;',
+            'url' => (string) new PaymentsRequest($request->page() - 1, $request->supplier(), $request->cost_rating())
+        ];
+    }
+
+
+    /**
+     * @param PaymentsRequest $request
+     * @param int $total_pages
+     * @return array $link['disabled', 'active', 'text', 'url']
+     */
+    private function nextLink(PaymentsRequest $request, int $total_pages) : array
+    {
+        return [
+            'disabled' =>  $request->page() >= $total_pages,
+            'active' => false,
+            'text' => '&rsaquo;',
+            'url' => (string) new PaymentsRequest($request->page() + 1, $request->supplier(), $request->cost_rating())
+        ];
     }
 }
