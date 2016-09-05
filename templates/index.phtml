@@ -14,6 +14,15 @@
         <link rel="stylesheet" href="/theme/style.css">
 
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400" rel="stylesheet">
+
+        <script src="/javascript/jquery.min.js"></script>
+        <script src="/javascript/jquery.simplemodal.min.js"></script>
+        <script src="/javascript/payments.js"></script>
+        <script>
+            jQuery(function() {
+                startPaymentsApp(jQuery, '<?= $data->base_url ?>')
+            });
+        </script>
     </head>
     <body>
     <div class="tsh-container container">
@@ -35,7 +44,7 @@
                     <option value="4" <?= $data->query_cost_rating === 4 ? 'selected="selected"' : '' ?>>Pound rating: 4</option>
                     <option value="5" <?= $data->query_cost_rating === 5 ? 'selected="selected"' : '' ?>>Pound rating: 5</option>
                 </select>
-                <button class="btn">Reset</button>
+                <a href="?" class="btn">Reset</a>
                 <button class="btn btn-info" type="submit">Search</button>
             </fieldset>
         </form>
@@ -76,6 +85,7 @@
 
         <nav>
             <ul class="tsh-pagination">
+                <?php if($data->total_pages): ?>
                 <li>
                     <a href="<?= $data->prev_link['url'] ?>"
                        class="tsh-pagination-btn tsh-pagination-btn-prev" <?= $data->prev_link['disabled'] ? 'disabled' : '' ?>><?= $data->prev_link['text'] ?></a>
@@ -92,6 +102,7 @@
                     <a href="<?= $data->next_link['url'] ?>"
                        class="tsh-pagination-btn tsh-pagination-btn-next" <?= $data->next_link['disabled'] ? 'disabled' : '' ?>>&rsaquo;</a>
                 </li>
+                <?php endif; ?>
             </ul>
         </nav>
     </div>
