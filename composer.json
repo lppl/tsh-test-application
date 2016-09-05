@@ -26,8 +26,9 @@
   },
   "scripts": {
     "test": [
-      "@composer install",
+      "@composer install --dev",
       "phpunit -c test/backend/phpunit.xml"
-    ]
+    ],
+    "run-server": "php -S localhost:8889 -t ./"
   }
 }
