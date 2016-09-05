@@ -18,17 +18,17 @@ class mockingTS_HDbIsPosssible extends TestCase
     /** @test */
     public function byDeafultMockDontInteractWithDb()
     {
-        self::assertSame(DBMock::class, get_class(DBMock::Get()));
         self::assertSame(TSH_Db::class, get_class(TSH_Db::Get()));
         self::assertSame(DBMock::class, get_class(DBMock::Get()));
         self::assertSame(TSH_Db::class, get_class(TSH_Db::Get()));
+        self::assertSame(DBMock::class, get_class(DBMock::Get()));
     }
 
     /** @test */
     public function mockCanBeSwitchedOnAndOff()
     {
         $mock = DBMock::Get();
-        $db = TSH_Db::Get();;
+        $db = TSH_Db::Get();
         self::assertSame(TSH_Db::class, get_class(TSH_Db::Get()));
 
         $mock->mockWithMe($mock);
@@ -88,5 +88,17 @@ class mockingTS_HDbIsPosssible extends TestCase
 
         DBMock::Get()->mockWithMe($stub);
         TSH_Db::Get()->disconnect();
+    }
+
+    /** @before */
+    public function byDeafultDontMockMe()
+    {
+        DBMock::Get()->stopMockingMe();
+    }
+
+    /** @after */
+    public static function dontMockOtherTests()
+    {
+        DBMock::Get()->stopMockingMe();
     }
 }
