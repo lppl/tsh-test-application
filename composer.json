@@ -25,7 +25,7 @@
   "scripts": {
     "test": [
       "@composer install",
-      "phpunit -c test/backend/phpunit.xml --coverate-html"
+      "phpunit -c test/backend/phpunit.xml"
     ]
   }
 }
