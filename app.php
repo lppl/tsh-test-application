@@ -40,6 +40,15 @@ $app->get('/json', function(Request $request) use ($app) {
         $request->query->getInt('cost_rating', 0)
     ));
 
+    $data->payments = array_map(function(PaymentsModel $payment) {
+        return [
+            'supplier' => $payment->supplier,
+            'ref' => $payment->ref,
+            'cost_rating' => $payment->cost_rating,
+            'amount' => $payment->amount,
+        ];
+    }, $data->payments);
+
     return $app->json($data, 200);
 });
 
