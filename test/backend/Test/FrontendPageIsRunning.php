@@ -18,6 +18,7 @@ class FrontendPageIsRunning extends WebTestCase
     public function createApplication(): Application
     {
         $app = require __DIR__ . '/../../../app.php';
+        $app['config'] = require __DIR__ . '/../../../config/config.php';
         $app['debug'] = true;
         unset($app['exception_handler']);
         return $app;
@@ -29,7 +30,20 @@ class FrontendPageIsRunning extends WebTestCase
     {
         $client = $this->createClient();
         $client->request('GET', '/');
-        self::assertSame(200, $client->getResponse()->getStatusCode());
+        $response = $client->getResponse();
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('text/html;charset=UTF-8', $response->headers->get('content-type'));
+    }
+
+    /** @test */
+    public function jsonResponse()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/json');
+
+        $response = $client->getResponse();
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('application/json', $response->headers->get('content-type'));
     }
 
 
