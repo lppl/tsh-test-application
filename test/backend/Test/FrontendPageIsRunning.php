@@ -18,6 +18,7 @@ class FrontendPageIsRunning extends WebTestCase
     public function createApplication(): Application
     {
         $app = require __DIR__ . '/../../../app.php';
+        $app['config'] = require __DIR__ . '/../../../config/config.php';
         $app['debug'] = true;
         unset($app['exception_handler']);
         return $app;

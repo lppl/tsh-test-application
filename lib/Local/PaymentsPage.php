@@ -44,6 +44,9 @@ class PaymentsPage
     /** @var array */
     public $next_link = [];
 
+    /** @var string  */
+    public $base_url = '/';
+
     public function __construct(array $config)
     {
         foreach (get_object_vars($this) as $property => $default) {

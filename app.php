@@ -9,8 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 $app = new \Silex\Application();
 
-$app['config'] = require __DIR__ . '/config/config.php';
-
 $app->get('/', function(Request $request) use ($app) {
 
     $model = new PaymentsModel();
