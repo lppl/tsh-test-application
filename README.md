@@ -1,5 +1,6 @@
 #How to use this app
 
+For specification look at [README](specification/README.txt) in specification folder.
 
 ## Installation
 
