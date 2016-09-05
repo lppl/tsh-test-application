@@ -9,10 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 $app = new \Silex\Application();
 
-$app->get('/', function(Request $request) use ($app) {
+$app['payment_model'] = $app->factory(function () use ($app) {
+    return new PaymentsModel();
+});
 
-    $model = new PaymentsModel();
-    $controller = new PaymentsController($app['config'], $model);
+$app['controller'] = $app->factory(function () use ($app) {
+    return new PaymentsController($app['config'], $app['payment_model']);
+});
+
+$app->get('/', function(Request $request) use ($app) {
+    $controller = $app['controller'];
 
     $data = $controller->respondTo(new PaymentsRequest(
         $request->query->getInt('page', 1),
@@ -28,9 +34,7 @@ $app->get('/', function(Request $request) use ($app) {
 });
 
 $app->get('/json', function(Request $request) use ($app) {
-
-    $model = new PaymentsModel();
-    $controller = new PaymentsController($app['config'], $model);
+    $controller = $app['controller'];
 
     $data = $controller->respondTo(new PaymentsRequest(
         $request->query->getInt('page', 1),
