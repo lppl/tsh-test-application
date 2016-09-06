@@ -23,7 +23,7 @@ final class PaymentsRequest
     public function __construct(int $page = 1, string $supplier = '', int $cost_rating = 0)
     {
         $this->page = max(1, $page);
-        $this->supplier = $supplier;
+        $this->supplier = filter_var($supplier, FILTER_SANITIZE_SPECIAL_CHARS);
         $this->cost_rating = $cost_rating;
     }
 
