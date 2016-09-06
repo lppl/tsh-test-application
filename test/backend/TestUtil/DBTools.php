@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace TSH\Local\TestUtil;
 
+use Prophecy\Prophet;
 use TSH\Local\PaymentsModel;
 
 trait DBTools
@@ -46,10 +47,52 @@ trait DBTools
 
     public function insertCustomPayments(array $payments = [])
     {
-        foreach($payments as $payment) {
+        foreach ($payments as $payment) {
             $model = new PaymentsModel();
             $model->setFromArray($payment);
             $model->save();
         }
+    }
+
+    /**
+     * Helper for Mocking TSH_Model::Find()
+     *
+     * Last parameter have to contain array of rows db should return to model
+     *
+     * Other params have to contain data passed to TSH_Db::selectFirst()
+     * called by TSH_Model
+     *
+     * @param $sql
+     * @param $params
+     * @param $willReturn
+     */
+    public function MockFind($sql, $params, $willReturn)
+    {
+        $prophet = (new Prophet)->prophesize(DBMock::class);
+        $prophet->selectFirst($sql, $params)->WillReturn($willReturn);
+        $stub = $prophet->reveal();
+        DBMock::Get()->mockWithMe($stub);
+    }
+
+    /**
+     * Helper for Mocking TSH_Model::FindPage()
+     *
+     * Last parameter have to contain array of rows db should return to model
+     *
+     * Other params have to contain data passed to TSH_Db::selectPage()
+     * called by TSH_Model
+     *
+     * @param $page
+     * @param $sql
+     * @param $params
+     * @param $numPerPage
+     * @param $willReturn
+     */
+    public function MockFindPage($page, $sql, $params, $numPerPage, $willReturn)
+    {
+        $prophet = (new Prophet)->prophesize(DBMock::class);
+        $prophet->selectPage($page, $sql, $params, $numPerPage)->WillReturn($willReturn);
+        $stub = $prophet->reveal();
+        DBMock::Get()->mockWithMe($stub);
     }
 }

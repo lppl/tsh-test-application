@@ -8,6 +8,7 @@ declare(strict_types = 1);
 namespace TSH\Local\Test;
 
 use TSH\Local\PaymentsModel;
+use TSH\Local\TestUtil\DBMock;
 use TSH\Local\TestUtil\DBTools;
 
 use PHPUnit\Framework\TestCase;
@@ -16,58 +17,49 @@ class PullingPaymantsData extends TestCase
 {
     use DBTools;
 
-    protected function setUp()
-    {
-        $this->resetData();
-    }
+    private $db = [
+        'payment_id' => 1,
+        'payment_supplier' => 'Supplier 1',
+        'payment_ref' => '67779',
+        'payment_cost_rating' => 2,
+        'payment_amount' => 200.00,
+    ];
 
     /** @test */
     public function paymentsAreEmptyWhenDBIsEmpty()
     {
-        $this->clearData();
-
+        $this->MockFindPage(1, "SELECT * FROM payments WHERE 1", [], 20, $willReturn = []);
         $model = new PaymentsModel();
-        $page = $model::FindPage(1, 1);
+        $page = $model::FindPage(1);
         self::assertCount(0, $page);
     }
 
     /** @test */
     public function paymentsSchemaIsValid()
     {
+        $willReturn = $this->db;
+        $this->MockFind("SELECT * FROM payments WHERE payment_id = :id", ["id" => 1], $willReturn);
+
         $model = new PaymentsModel();
 
         /** @var PaymentsModel $payment */
         $payment = $model::Find(1);
-        
-        self::assertSame('ACCESS MOBILITY', $payment->supplier);
-        self::assertSame('499778', $payment->ref);
-        self::assertSame(3, $payment->cost_rating);
-        self::assertSame(3694.60, $payment->amount);
+
+        self::assertSame($willReturn['payment_supplier'], $payment->supplier);
+        self::assertSame($willReturn['payment_ref'], $payment->ref);
+        self::assertSame($willReturn['payment_cost_rating'], $payment->cost_rating);
+        self::assertSame($willReturn['payment_amount'], $payment->amount);
     }
 
-    /** @test */
-    public function retrievePaymentsPages()
+    /** @before */
+    public function setUp()
     {
+        DBMock::Get()->stopMockingMe();
+    }
 
-        $model = new PaymentsModel();
-
-        /** @var PaymentsModel[] $page1 */
-        $page1 = $model::FindPage(1, 1);
-        self::assertCount(1, $page1);
-
-        /** @var PaymentsModel[] $page2 */
-        $page2 = $model::FindPage(2, 1);
-        self::assertNotEquals($page1, $page2);
-
-        self::assertEquals(
-            $model::Find('payment_ref=:payment_ref', ['payment_ref' => $page1[0]->ref], 1),
-            $page1
-        );
-        self::assertEquals(
-            $model::Find('payment_ref=:payment_ref', ['payment_ref' => $page2[0]->ref], 1),
-            $page2
-        );
-
-        self::assertEquals([$page1[0], $page2[0]], $model::FindPage(1, 2));
+    /** @afterClass */
+    public static function stopMockingDB()
+    {
+        DBMock::Get()->stopMockingMe();
     }
 }
