@@ -1,7 +1,8 @@
 <?php
 
+use TSH\Local\MySqlPaymentsModel;
+use TSH\Local\PaymentEntity;
 use TSH\Local\PaymentsController;
-use TSH\Local\PaymentsModel;
 use TSH\Local\PaymentsRequest;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 $app = new \Silex\Application();
 
 $app['payment_model'] = $app->factory(function () use ($app) {
-    return new PaymentsModel();
+    return new MySqlPaymentsModel();
 });
 
 $app['controller'] = $app->factory(function () use ($app) {
@@ -42,7 +43,7 @@ $app->get('/json', function(Request $request) use ($app) {
         $request->query->getInt('cost_rating', 0)
     ));
 
-    $data->payments = array_map(function(PaymentsModel $payment) {
+    $data->payments = array_map(function(PaymentEntity $payment) {
         return [
             'supplier' => $payment->supplier,
             'ref' => $payment->ref,

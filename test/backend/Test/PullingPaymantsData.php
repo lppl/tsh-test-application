@@ -7,7 +7,7 @@ declare(strict_types = 1);
 
 namespace TSH\Local\Test;
 
-use TSH\Local\PaymentsModel;
+use TSH\Local\MySqlPaymentsModel;
 use TSH\Local\TestUtil\DBMock;
 use TSH\Local\TestUtil\DBTools;
 
@@ -29,8 +29,8 @@ class PullingPaymantsData extends TestCase
     public function paymentsAreEmptyWhenDBIsEmpty()
     {
         $this->MockFindPage(1, "SELECT * FROM payments WHERE 1", [], 20, $willReturn = []);
-        $model = new PaymentsModel();
-        $page = $model::FindPage(1);
+        $model = new MySqlPaymentsModel();
+        $page = $model->FindPage(1);
         self::assertCount(0, $page);
     }
 
@@ -40,10 +40,9 @@ class PullingPaymantsData extends TestCase
         $willReturn = $this->db;
         $this->MockFind("SELECT * FROM payments WHERE payment_id = :id", ["id" => 1], $willReturn);
 
-        $model = new PaymentsModel();
+        $model = new MySqlPaymentsModel();
 
-        /** @var PaymentsModel $payment */
-        $payment = $model::Find(1);
+        $payment = $model->Find(1);
 
         self::assertSame($willReturn['payment_supplier'], $payment->supplier);
         self::assertSame($willReturn['payment_ref'], $payment->ref);

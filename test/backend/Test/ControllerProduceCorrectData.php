@@ -9,7 +9,8 @@ namespace TSH\Local\Test;
 
 use PHPUnit\Framework\TestCase;
 
-use TSH\Local\PaymentsModel;
+use TSH\Local\MySqlPaymentsModel;
+use TSH\Local\PaymentEntity;
 use TSH\Local\PaymentsPage;
 use TSH\Local\PaymentsController;
 use TSH\Local\PaymentsRequest;
@@ -45,7 +46,7 @@ class ControllerProduceCorrectData extends TestCase
         $total_pages = $response['total_pages'] ?? 50;
 
 
-        $controller = new PaymentsController($config, new PaymentsModel());
+        $controller = new PaymentsController($config, new MySqlPaymentsModel());
 
         $page = $controller->respondTo($request);
 
@@ -58,7 +59,7 @@ class ControllerProduceCorrectData extends TestCase
 
         self::assertCount($payments_on_page, $page->payments);
         foreach ($page->payments as $payment) {
-            self::assertSame(PaymentsModel::class, get_class($payment));
+            self::assertNotNull(PaymentEntity::class, get_class($payment));
         }
 
 
@@ -103,7 +104,7 @@ class ControllerProduceCorrectData extends TestCase
         int $result_count,
         string $query_info)
     {
-        $controller = new PaymentsController($this->base_config, new PaymentsModel());
+        $controller = new PaymentsController($this->base_config, new MySqlPaymentsModel());
 
         $this->clearData();
         $this->insertCustomPayments([[

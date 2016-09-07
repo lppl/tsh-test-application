@@ -52,7 +52,7 @@ class PaymentsController
 
         list($where, $params) = $this->query($request);
 
-        $payments = $model::FindPage(
+        $payments = $model->FindPage(
             $request->page(),
             $this->config['payments_per_page'],
             $where,

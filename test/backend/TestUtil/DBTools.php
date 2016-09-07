@@ -8,7 +8,8 @@ declare(strict_types = 1);
 namespace TSH\Local\TestUtil;
 
 use Prophecy\Prophet;
-use TSH\Local\PaymentsModel;
+use TSH\Local\MySqlPaymentsModel;
+use TSH\Local\PaymentEntity;
 
 trait DBTools
 {
@@ -45,12 +46,14 @@ trait DBTools
         exec($this->credentials() . ' < ' . $script);
     }
 
+    /**
+     * @param array $payments
+     */
     public function insertCustomPayments(array $payments = [])
     {
-        foreach ($payments as $payment) {
-            $model = new PaymentsModel();
-            $model->setFromArray($payment);
-            $model->save();
+        $model = new MySqlPaymentsModel();
+        foreach($payments as $payment) {
+            $model->Save(new PaymentEntity($payment));
         }
     }
 

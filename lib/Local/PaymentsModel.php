@@ -5,28 +5,32 @@
 
 declare(strict_types = 1);
 
+
 namespace TSH\Local;
 
-use TSH_Model;
 
-/**
- * @property string $supplier
- * @property string $ref
- * @property int $cost_rating
- * @property float $amount
- */
-class PaymentsModel extends TSH_Model
+interface PaymentsModel
 {
-    public static $_TableName = 'payments';
-    public static $_ItemName = 'payment';
+    /**
+     * @param bool $idOrWhere
+     * @param array $params
+     * @param bool $limit
+     * @return PaymentEntity
+     */
+    public function Find($idOrWhere = false, $params = [], $limit = false) : PaymentEntity;
 
-    public function setFromArray(array $array)
-    {
-        parent::setFromArray([
-            'payment_supplier' => $array['payment_supplier'],
-            'payment_ref' => $array['payment_ref'],
-            'payment_cost_rating' => (int) $array['payment_cost_rating'],
-            'payment_amount' => (float) $array['payment_amount'],
-        ]);
-    }
+    /**
+     * @param $page
+     * @param int $numPerPage
+     * @param int $where
+     * @param array $params
+     * @return PaymentEntity[]
+     */
+    public function FindPage($page, $numPerPage = 20, $where = 1, $params = []) : array;
+
+    /**
+     * @param PaymentEntity $payment
+     * @return void
+     */
+    public function Save(PaymentEntity $payment);
 }
